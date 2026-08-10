@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-myapp     # Release name is set at install time
+  labels:
+    app: {{ .Release.Name }}-myapp
+spec:
+  replicas: {{ .Values.replicaCount }} # Comes from values.yaml
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-myapp
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-myapp
+    spec:
+      containers:
+        - name: myapp
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 80
+          resources: {{ toYaml .Values.resources | nindent 12 }}
