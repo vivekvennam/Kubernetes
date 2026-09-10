@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vrpodb
+  labels:
+    app: vroapp
+template:
+  metadata:
+    labels:
+      app: vroapp
+  spec:
+    containers:
+      - name: vprodb
+        image: vprocontainers/vprofiledb
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-secret
+                key: db-pass
+        ports:
+          - name: vprodb-port
+            containerPort: 3306
+        volumeMounts:
+          - name: vpro-db-data
+            mountPath: /var/lib/mysql
+    volumes:
+      - name: vpro-db-data
+        persistentVolumeClaim:
+          claimName: db-pv-claim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vroapp
