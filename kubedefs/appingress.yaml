@@ -4,16 +4,21 @@ metadata:
   name: vproapp-ingress
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - vprofile.xcaly.xyz
+      secretName: vproapp-tls
   rules:
-    - host: xcal.xyz
+    - host: vprofile.xcaly.xyz
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: vproapp
+                name: vproweb
                 port:
-                  number: 8080
+                  number: 80

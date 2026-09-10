@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vproweb
+  labels:
+    app: vproweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vproweb
+  template:
+    metadata:
+      labels:
+        app: vproweb
+    spec:
+      containers:
+        - name: vproweb
+          image: vprocontainers/vprofileweb
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
