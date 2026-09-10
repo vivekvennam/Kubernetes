@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: db-pv-claim
   labels:
-    app: vrpodb
+    app: vprodb
 spec:
   accessModes:
     - ReadWriteOnce
