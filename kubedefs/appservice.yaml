@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vproapp
+  labels:
+    app: vproapp
+spec:
+  selector:
+    app: vproapp
+  ports:
+    - name: tomcat
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

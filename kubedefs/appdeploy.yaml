@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vproapp
+  labels:
+    app: vproapp
+spec:
+  selector:
+    matchLabels:
+      app: vproapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: vproapp
+    spec:
+      initContainers:
+        - name: wait-for-backend
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z vprodb 3306 && nc -z vprocache01 11211 && nc -z vpromq01 5672; do
+                echo "Waiting for DB, Memcached and RabbitMQ...";
+                sleep 4;
+              done
+              echo "Backend services are ready";
+      containers:
+        - name: vproapp
+          image: vprocontainers/vprofileapp
+          ports:
+            - name: vproapp-port
+              containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: vprodb
+            - name: DB_PORT
+              value: "3306"
+            - name: MEMCACHE_HOST
+              value: vprocache01
+            - name: MEMCACHE_PORT
+              value: "11211"
+            - name: RMQ_HOST
+              value: vpromq01
+            - name: RMQ_PORT
+              value: "5672"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
